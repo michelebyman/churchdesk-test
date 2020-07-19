@@ -1,13 +1,12 @@
 import React from 'react';
 import { Table } from 'antd';
 import './App.css';
+
 const columns = [
   {
     title: 'Repository name',
     dataIndex: 'name',
     key: 'key',
-
-
   },
   {
     title: 'Repository full name',
@@ -21,10 +20,6 @@ const columns = [
     render: title => <a href={title} target="_blank" rel="noopener noreferrer" >{title}</a>,
   }
 ]
-
-
-
-
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -41,7 +36,12 @@ class App extends React.Component {
   componentDidMount() {
     this.setState({ loading: true })
     fetch('https://api.github.com/orgs/churchdesk/repos?per_page=10&page=1')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw Error(response.statusText);
+        }
+        return response.json()
+      })
       .then(data => {
         this.setState({
           loading: false,
@@ -55,10 +55,8 @@ class App extends React.Component {
           })
         })
       })
+      .catch(err => console.error(err))
   }
-
-
-
 
   render() {
     return (
@@ -71,7 +69,6 @@ class App extends React.Component {
         />
       </div>
     )
-
   }
 }
 
